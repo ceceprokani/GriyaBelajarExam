@@ -95,7 +95,7 @@ public class FrameActivity extends AppCompatActivity {
             frame.getSettings().setDomStorageEnabled(true);
             frame.setHapticFeedbackEnabled(false);
             frame.getSettings().setJavaScriptEnabled(true);
-            frame.getSettings().setLoadWithOverviewMode(true);
+            frame.getSettings().setLoadWithOverviewMode(false);
             frame.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
             frame.setBackgroundColor(Color.TRANSPARENT);
             frame.setLayerType(WebView.LAYER_TYPE_NONE, null);
@@ -129,21 +129,22 @@ public class FrameActivity extends AppCompatActivity {
                     super.onReceivedSslError(view, handler, error);
                 }
 
-//                @Override
-//                public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-//                    if (error.getErrorCode() != -1) {
+                @Override
+                public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                    if (error.getDescription().length() > 0) {
+                        helper.saveSession("isLoggedIn", "false");
 //                        Toast.makeText(FrameActivity.this, "Laman yang kamu kunjungi tidak ditemukan!", Toast.LENGTH_SHORT).show();
 //                        finished();
-//                    }
-//                    super.onReceivedError(view, request, error);
-//                }
+                    }
+                    super.onReceivedError(view, request, error);
+                }
 
                 @Override
                 public void onPageFinished(final WebView view, final String url) {
-                    if (url.equals("https://app.griyabelajar.com/#/signin")) {
-                        helper.saveSession("isLoggedIn", "0");
-                    } else {
+                    if (url.contains("griyabelajar.com") && !url.equals("https://app.griyabelajar.com/#/signin")) {
                         helper.saveSession("isLoggedIn", "1");
+                    } else {
+                        helper.saveSession("isLoggedIn", "0");
                     }
                 }
             });
