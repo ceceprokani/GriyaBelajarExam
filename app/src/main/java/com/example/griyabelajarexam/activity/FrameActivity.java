@@ -81,9 +81,9 @@ public class FrameActivity extends AppCompatActivity {
             frame.clearCache(true);
             frame.setVerticalScrollBarEnabled(true);
             frame.setHorizontalScrollBarEnabled(true);
-            frame.getSettings().setBuiltInZoomControls(true);
+            frame.getSettings().setBuiltInZoomControls(false);
             frame.getSettings().setDisplayZoomControls(false);
-            frame.getSettings().setSupportZoom(true);
+            frame.getSettings().setSupportZoom(false);
             frame.setLongClickable(false);
             frame.getSettings().setDomStorageEnabled(true);
             frame.setHapticFeedbackEnabled(false);
