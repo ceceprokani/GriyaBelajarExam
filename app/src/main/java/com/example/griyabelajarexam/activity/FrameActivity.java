@@ -7,8 +7,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.http.SslError;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
@@ -16,6 +16,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
@@ -23,19 +24,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.griyabelajarexam.R;
+import com.example.griyabelajarexam.helper.General;
 
 public class FrameActivity extends AppCompatActivity {
     private WebView frame;
     private String url;
-    private final String SESSION = "GRIYA_SESSION";
     private SwipeRefreshLayout swipeRefreshLayout;
+    private General helper;
+    private ImageButton back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_content);
 
@@ -47,17 +50,26 @@ public class FrameActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        back = findViewById(R.id.back);
         swipeRefreshLayout = findViewById(R.id.swipe);
         frame = findViewById(R.id.frame);
     }
 
     private void init() {
+        this.helper = new General(this);
         this.loadWeb();
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 frame.reload();
                 swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLoggedIn()) initConfirmationDialog();
+                else finished();
             }
         });
     }
@@ -97,9 +109,9 @@ public class FrameActivity extends AppCompatActivity {
                 @Override
                 public void onPageFinished(final WebView view, final String url) {
                     if (url.equals("https://app.griyabelajar.com/#/signin")) {
-                        saveSessionLoggedIn(false);
+                        helper.saveSession("isLoggedIn", "0");
                     } else {
-                        saveSessionLoggedIn(true);
+                        helper.saveSession("isLoggedIn", "1");
                     }
                 }
             });
@@ -108,16 +120,8 @@ public class FrameActivity extends AppCompatActivity {
         }
     }
 
-    private void saveSessionLoggedIn(boolean isLoggedIn) {
-        SharedPreferences sharedPreferences = getSharedPreferences(SESSION, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isLoggedIn", isLoggedIn);
-        editor.apply();
-    }
-
     private boolean isLoggedIn() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SESSION, Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean("isLoggedIn", false);
+        return this.helper.getSession("isLoggedIn").equals("1");
     }
 
     private void onBackPress() {
@@ -142,6 +146,7 @@ public class FrameActivity extends AppCompatActivity {
         stopLockTask();
         finish();
         WebStorage.getInstance().deleteAllData();
+        helper.clearSession();
     }
 
 

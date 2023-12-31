@@ -13,4 +13,10 @@
         <item name="android:statusBarColor">@color/orange</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="Theme.NoActionBar" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
 </resources>
