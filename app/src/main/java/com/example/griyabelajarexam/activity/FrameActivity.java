@@ -166,6 +166,7 @@ public class FrameActivity extends AppCompatActivity {
 
     @Override
     protected void onUserLeaveHint() {
-        finished();
+        frame.reload();
+//        finished();
     }
 }

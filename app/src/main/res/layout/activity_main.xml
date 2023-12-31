@@ -1,34 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="48dp">
 
-    <EditText
-        android:id="@+id/url"
-        android:layout_width="268dp"
-        android:layout_height="48dp"
-        android:ems="10"
-        android:hint="Masukan URL disini ..."
-        android:inputType="text"
-        tools:ignore="MissingConstraints"/>
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="32dp"
+        android:src="@drawable/logo" />
 
-    <Button
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:hint="Link URL">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/action1"
-        android:layout_width="269dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="80dp"
-        android:text="AKSES URL"
-        tools:ignore="HardcodedText,MissingConstraints" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:paddingVertical="16dp"
+        app:fb_defaultColor="@color/primary"
+        app:fb_focusColor="#9bd823"
+        app:fb_iconPaddingRight="8dp"
+        app:fb_iconPosition="left"
+        app:fb_iconResource="@drawable/link"
+        app:fb_radius="8dp"
+        app:fb_text="AKSES URL"
+        app:fb_textColor="#FFFFFF" />
 
-    <Button
+    <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/action2"
-        android:layout_width="269dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:text="SCAN QR-CODE"
-        tools:ignore="HardcodedText,MissingConstraints"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="16dp"
+        app:fb_defaultColor="@color/primary"
+        app:fb_focusColor="#9bd823"
+        app:fb_iconPaddingRight="8dp"
+        app:fb_iconPosition="left"
+        app:fb_iconResource="@drawable/qrcode"
+        app:fb_radius="8dp"
+        app:fb_text="SCAN QR-CODE"
+        app:fb_textColor="#FFFFFF" />
+
 </LinearLayout>
