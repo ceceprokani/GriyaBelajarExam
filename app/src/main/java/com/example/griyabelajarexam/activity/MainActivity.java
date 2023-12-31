@@ -3,6 +3,7 @@ package com.example.griyabelajarexam.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
@@ -43,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String tmpUrl = url.getText().toString().isEmpty() ? "https://app.griyabelajar.com" : url.getText().toString();
-                startIntent(tmpUrl);
+                String baseUrl = "https://" + tmpUrl;
+                startIntent(baseUrl);
             }
         });
         actionTwo.setOnClickListener(new View.OnClickListener() {
@@ -60,17 +62,25 @@ public class MainActivity extends AppCompatActivity {
 
         this.helper = new General(this);
 
-        if(helper.getSession("url") != null) {
+        if (helper.getSession("url") != null) {
             startIntent(helper.getSession("url"));
         }
     }
 
     private void startIntent(String tmpUrl) {
-        helper.saveSession("url", tmpUrl);
+        if (Patterns.WEB_URL.matcher(tmpUrl).matches()) {
+            if (tmpUrl.contains("griyabelajar.com")) {
+                helper.saveSession("url", tmpUrl);
 
-        Intent intent = new Intent(MainActivity.this, FrameActivity.class);
-        intent.putExtra("url", tmpUrl);
-        startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, FrameActivity.class);
+                intent.putExtra("url", tmpUrl);
+                startActivity(intent);
+            } else {
+                Toast.makeText(MainActivity.this, "Link URL yang kamu masukan tidak kami izinkan!", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(MainActivity.this, "Link URL yang kamu masukan tidak valid!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),

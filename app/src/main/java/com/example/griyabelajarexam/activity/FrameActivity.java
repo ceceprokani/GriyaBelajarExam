@@ -1,26 +1,33 @@
 package com.example.griyabelajarexam.activity;
 
 import android.app.ActivityManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.griyabelajarexam.R;
@@ -42,9 +49,9 @@ public class FrameActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_content);
 
+        startLockTask();
         initView();
         init();
-        startLockTask();
 
         onBackPress();
     }
@@ -93,6 +100,22 @@ public class FrameActivity extends AppCompatActivity {
             frame.setBackgroundColor(Color.TRANSPARENT);
             frame.setLayerType(WebView.LAYER_TYPE_NONE, null);
             frame.clearHistory();
+            frame.setWebChromeClient(new WebChromeClient() {
+                private ProgressDialog mProgress;
+
+                @Override
+                public void onProgressChanged(WebView view, int progress) {
+                    if (mProgress == null) {
+                        mProgress = new ProgressDialog(FrameActivity.this);
+                        mProgress.show();
+                    }
+                    mProgress.setMessage("Loading " + String.valueOf(progress) + "%");
+                    if (progress == 100) {
+                        mProgress.dismiss();
+                        mProgress = null;
+                    }
+                }
+            });
             frame.setWebViewClient(new WebViewClient() {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -105,6 +128,15 @@ public class FrameActivity extends AppCompatActivity {
                 public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                     super.onReceivedSslError(view, handler, error);
                 }
+
+//                @Override
+//                public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+//                    if (error.getErrorCode() != -1) {
+//                        Toast.makeText(FrameActivity.this, "Laman yang kamu kunjungi tidak ditemukan!", Toast.LENGTH_SHORT).show();
+//                        finished();
+//                    }
+//                    super.onReceivedError(view, request, error);
+//                }
 
                 @Override
                 public void onPageFinished(final WebView view, final String url) {
