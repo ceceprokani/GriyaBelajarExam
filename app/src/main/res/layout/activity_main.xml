@@ -1,106 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="48dp">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginRight="8dp"
-            android:src="@drawable/logo" />
+        <include layout="@layout/toolbar" />
 
-        <ImageView
-            android:layout_width="82dp"
-            android:layout_height="82dp"
-            android:src="@drawable/logo_nhsc" />
-    </LinearLayout>
-
-    <TextView
-        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/app_name"
-        android:textColor="@color/primary" />
-
-    <TextView
-        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:text="Lembaga NHSC"
-        android:textColor="@color/primary" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="55dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="8dp"
-            android:background="@drawable/form_control_prepend_primary"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="https://"
-            android:textColor="@color/white" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Link URL">
+            android:orientation="vertical"
+            android:padding="48dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/url"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="1" />
+                android:gravity="center"
+                android:orientation="horizontal">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/logo" />
+
+                <ImageView
+                    android:layout_width="82dp"
+                    android:layout_height="82dp"
+                    android:src="@drawable/logo_nhsc" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:text="@string/app_name"
+                android:textColor="@color/primary" />
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="48dp"
+                android:text="Lembaga NHSC"
+                android:textColor="@color/primary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="55dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/form_control_prepend_primary"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="https://"
+                    android:textColor="@color/white" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Link URL">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/url"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <mehdi.sakout.fancybuttons.FancyButton
+                android:id="@+id/action1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:paddingVertical="16dp"
+                app:fb_defaultColor="@color/primary"
+                app:fb_focusColor="#9bd823"
+                app:fb_iconPaddingRight="8dp"
+                app:fb_iconPosition="left"
+                app:fb_iconResource="@drawable/link"
+                app:fb_radius="8dp"
+                app:fb_text="AKSES URL"
+                app:fb_textColor="#FFFFFF" />
+
+            <mehdi.sakout.fancybuttons.FancyButton
+                android:id="@+id/action2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="16dp"
+                app:fb_defaultColor="@color/primary"
+                app:fb_focusColor="#9bd823"
+                app:fb_iconPaddingRight="8dp"
+                app:fb_iconPosition="left"
+                app:fb_iconResource="@drawable/qrcode"
+                app:fb_radius="8dp"
+                app:fb_text="SCAN QR-CODE"
+                app:fb_textColor="#FFFFFF" />
+        </LinearLayout>
     </LinearLayout>
-
-    <mehdi.sakout.fancybuttons.FancyButton
-        android:id="@+id/action1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:paddingVertical="16dp"
-        app:fb_defaultColor="@color/primary"
-        app:fb_focusColor="#9bd823"
-        app:fb_iconPaddingRight="8dp"
-        app:fb_iconPosition="left"
-        app:fb_iconResource="@drawable/link"
-        app:fb_radius="8dp"
-        app:fb_text="AKSES URL"
-        app:fb_textColor="#FFFFFF" />
-
-    <mehdi.sakout.fancybuttons.FancyButton
-        android:id="@+id/action2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="16dp"
-        app:fb_defaultColor="@color/primary"
-        app:fb_focusColor="#9bd823"
-        app:fb_iconPaddingRight="8dp"
-        app:fb_iconPosition="left"
-        app:fb_iconResource="@drawable/qrcode"
-        app:fb_radius="8dp"
-        app:fb_text="SCAN QR-CODE"
-        app:fb_textColor="#FFFFFF" />
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

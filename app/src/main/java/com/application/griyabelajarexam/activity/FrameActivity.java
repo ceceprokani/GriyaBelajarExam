@@ -18,22 +18,17 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageButton;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.application.griyabelajarexam.R;
-import com.application.griyabelajarexam.helper.General;
 
-public class FrameActivity extends AppCompatActivity {
+public class FrameActivity extends Base {
     private WebView frame;
     private String url;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private General helper;
-    private ImageButton back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +46,15 @@ public class FrameActivity extends AppCompatActivity {
         onBackPress();
     }
 
-    private void initView() {
-        back = findViewById(R.id.back);
+    @Override
+    protected void initView() {
+        super.initView();
+
         swipeRefreshLayout = findViewById(R.id.swipe);
         frame = findViewById(R.id.frame);
     }
 
     private void init() {
-        this.helper = new General(this);
         this.loadWeb();
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

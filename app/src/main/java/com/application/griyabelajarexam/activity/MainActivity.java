@@ -8,10 +8,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.application.griyabelajarexam.R;
-import com.application.griyabelajarexam.helper.General;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.zxing.client.android.Intents;
 import com.journeyapps.barcodescanner.ScanContract;
@@ -19,10 +17,9 @@ import com.journeyapps.barcodescanner.ScanOptions;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Base {
     private FancyButton actionOne, actionTwo;
     private TextInputEditText url;
-    private General helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +30,16 @@ public class MainActivity extends AppCompatActivity {
         init();
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
+        super.initView();
+
         actionOne = findViewById(R.id.action1);
         actionTwo = findViewById(R.id.action2);
         url = findViewById(R.id.url);
+
+        back.setVisibility(View.GONE);
+        title.setPadding(100, 0,0,0);
     }
 
     private void init() {
@@ -59,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
                 barcodeLauncher.launch(options);
             }
         });
-
-        this.helper = new General(this);
 
         if (helper.getSession("url") != null) {
             startIntent(helper.getSession("url"));
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                     if (originalIntent == null) {
                         Log.d("MainActivity", "Cancelled scan");
                         Toast.makeText(MainActivity.this, "Cancelled", Toast.LENGTH_LONG).show();
-                    } else if(originalIntent.hasExtra(Intents.Scan.MISSING_CAMERA_PERMISSION)) {
+                    } else if (originalIntent.hasExtra(Intents.Scan.MISSING_CAMERA_PERMISSION)) {
                         Log.d("MainActivity", "Cancelled scan due to missing camera permission");
                         Toast.makeText(MainActivity.this, "Cancelled due to missing camera permission", Toast.LENGTH_LONG).show();
                     }
@@ -98,5 +99,4 @@ public class MainActivity extends AppCompatActivity {
                     startIntent(result.getContents());
                 }
             });
-
 }
