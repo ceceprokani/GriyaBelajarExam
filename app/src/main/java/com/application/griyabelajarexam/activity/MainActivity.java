@@ -70,7 +70,7 @@ public class MainActivity extends Base {
 
     private void startIntent(String tmpUrl) {
         if (Patterns.WEB_URL.matcher(tmpUrl).matches()) {
-            if (tmpUrl.contains("griyabelajar.com")) {
+            if (tmpUrl.toLowerCase().contains("griyabelajar")) {
                 helper.saveSession("url", tmpUrl);
 
                 Intent intent = new Intent(MainActivity.this, FrameActivity.class);
@@ -96,6 +96,7 @@ public class MainActivity extends Base {
                         Toast.makeText(MainActivity.this, "Cancelled due to missing camera permission", Toast.LENGTH_LONG).show();
                     }
                 } else {
+                    Log.e("TAE", result.getContents());
                     startIntent(result.getContents());
                 }
             });
