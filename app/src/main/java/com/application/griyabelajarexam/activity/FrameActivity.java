@@ -4,9 +4,13 @@ import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -18,6 +22,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
@@ -25,9 +30,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.application.griyabelajarexam.R;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class FrameActivity extends Base {
     private WebView frame;
     private String url;
+    private boolean isPause = false;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -56,6 +65,14 @@ public class FrameActivity extends Base {
 
     private void init() {
         this.loadWeb();
+        if (this.checkViolation()) {
+            new Timer().scheduleAtFixedRate(new TimerTask(){
+                @Override
+                public void run(){
+                    finished();
+                }
+            },0,1000);
+        }
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -91,22 +108,24 @@ public class FrameActivity extends Base {
             frame.setBackgroundColor(Color.TRANSPARENT);
             frame.setLayerType(WebView.LAYER_TYPE_NONE, null);
             frame.clearHistory();
-            frame.setWebChromeClient(new WebChromeClient() {
-                private ProgressDialog mProgress;
-
-                @Override
-                public void onProgressChanged(WebView view, int progress) {
-                    if (mProgress == null) {
-                        mProgress = new ProgressDialog(FrameActivity.this);
-                        mProgress.show();
-                    }
-                    mProgress.setMessage("Loading " + String.valueOf(progress) + "%");
-                    if (progress == 100) {
-                        mProgress.dismiss();
-                        mProgress = null;
-                    }
-                }
-            });
+//            frame.setWebChromeClient(new WebChromeClient() {
+//                private ProgressDialog mProgress;
+//
+//                @Override
+//                public void onProgressChanged(WebView view, int progress) {
+//                    try {
+//                        if (mProgress == null) {
+//                            mProgress = new ProgressDialog(getBaseContext());
+//                            mProgress.show();
+//                        }
+//                        mProgress.setMessage("Loading " + String.valueOf(progress) + "%");
+//                        if (progress == 100) {
+//                            mProgress.dismiss();
+//                            mProgress = null;
+//                        }
+//                    } catch (Exception e) {}
+//                }
+//            });
             frame.setWebViewClient(new WebViewClient() {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -132,6 +151,8 @@ public class FrameActivity extends Base {
 
                 @Override
                 public void onPageFinished(final WebView view, final String url) {
+                    super.onPageFinished(view, url);
+
                     if (url.contains("griyabelajar.com") && !url.equals("https://app.griyabelajar.com/#/signin")) {
                         helper.saveSession("isLoggedIn", "1");
                     } else {
@@ -161,16 +182,59 @@ public class FrameActivity extends Base {
     private void initConfirmationDialog() {
         new AlertDialog.Builder(this).setTitle("PERINGATAN!!!").setMessage("Apakah kamu yakin akan keluar dari aplikasi ? kamu akan otomatis logout" + " dari aplikasi!").setIcon(R.drawable.warning).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                finished();
+                frame.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                        // TODO Auto-generated method stub
+                        view.loadUrl(request.getUrl().toString());
+                        return true;
+                    }
+
+                    @Override
+                    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                        super.onReceivedSslError(view, handler, error);
+                    }
+
+                    @Override
+                    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                        super.onReceivedError(view, request, error);
+                    }
+
+                    @Override
+                    public void onPageFinished(final WebView view, final String url) {
+                        super.onPageFinished(view, url);
+
+                        finished();
+                    }
+                });
+                frame.loadUrl("javascript:(function(){document.getElementById('lock_users').click();})();");
             }
         }).setNegativeButton(android.R.string.no, null).show();
     }
 
+    private boolean checkViolation() {
+        PackageInfo pinfo = null;
+        try {
+            pinfo = getPackageManager().getPackageInfo("com.lwi.android.flapps", 0);
+            String verName = pinfo.versionName;
+
+            // if app is not installed
+            if (!verName.isEmpty()) {
+                Toast.makeText(this, "Mohon untuk tidak berbuat curang dengan menginstall aplikasi yang dilarang!", Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
     private void finished() {
         stopLockTask();
-        finish();
         WebStorage.getInstance().deleteAllData();
         helper.clearSession();
+        finish();
     }
 
 
@@ -188,14 +252,37 @@ public class FrameActivity extends Base {
     public void onPause() {
         super.onPause();
 
-        ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        this.isPause = true;
 
+        ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         activityManager.moveTaskToFront(getTaskId(), 0);
+    }
+
+    public void onResume() {
+        super.onResume();
+
+        if (this.checkViolation() && this.isPause) {
+            new Timer().scheduleAtFixedRate(new TimerTask(){
+                @Override
+                public void run(){
+                    finished();
+                }
+            },0,1000);
+        }
     }
 
     @Override
     protected void onUserLeaveHint() {
-        frame.reload();
+        if (this.checkViolation()) {
+            new Timer().scheduleAtFixedRate(new TimerTask(){
+                @Override
+                public void run(){
+                    finished();
+                }
+            },0,1000);
+        } else {
+            frame.reload();
+        }
 //        finished();
     }
 }
