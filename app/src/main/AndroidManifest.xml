@@ -4,6 +4,25 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+    <queries>
+        <package android:name="com.lwi.android.flapps" />
+        <package android:name="comspli.exaspli.splitscspli" />
+        <package android:name="com.split.screen.shortcut.overview.accessibility.notification" />
+        <package android:name="any.splitscreen" />
+        <package android:name="com.split.screen" />
+        <package android:name="com.fb.splitscreenlauncher" />
+        <package android:name="maxcom.toolbox.screensplitter" />
+        <package android:name="com.dvg.multivideoplayer" />
+        <package android:name="com.mercandalli.android.apps.bubble" />
+        <package android:name="com.split.screen.shortcut" />
+        <package android:name="com.artds.split.dual.screen.nb" />
+        <package android:name="com.dualbrowser.splitscreen.multi" />
+        <package android:name="splitscreen.dualscreen.favoriteappindia" />
+        <package android:name="com.view.multiscreenviewbrowser" />
+        <package android:name="com.aicity.aiscreen" />
+    </queries>
 
     <application
         android:allowBackup="true"

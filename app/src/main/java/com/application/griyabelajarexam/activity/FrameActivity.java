@@ -1,28 +1,21 @@
 package com.application.griyabelajarexam.activity;
 
 import android.app.ActivityManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.http.SslError;
 import android.os.Bundle;
-import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
-import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
@@ -45,6 +38,7 @@ public class FrameActivity extends Base {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
         setContentView(R.layout.activity_content);
 
@@ -210,24 +204,6 @@ public class FrameActivity extends Base {
                 frame.loadUrl("javascript:(function(){document.getElementById('lock_users').click();})();");
             }
         }).setNegativeButton(android.R.string.no, null).show();
-    }
-
-    private boolean checkViolation() {
-        PackageInfo pinfo = null;
-        try {
-            pinfo = getPackageManager().getPackageInfo("com.lwi.android.flapps", 0);
-            String verName = pinfo.versionName;
-
-            // if app is not installed
-            if (!verName.isEmpty()) {
-                Toast.makeText(this, "Mohon untuk tidak berbuat curang dengan menginstall aplikasi yang dilarang!", Toast.LENGTH_SHORT).show();
-                return true;
-            } else {
-                return false;
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
     }
 
     private void finished() {

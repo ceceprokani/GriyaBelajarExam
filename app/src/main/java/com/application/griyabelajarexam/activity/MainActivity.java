@@ -1,6 +1,7 @@
 package com.application.griyabelajarexam.activity;
 
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import com.google.zxing.client.android.Intents;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.util.List;
+
 import mehdi.sakout.fancybuttons.FancyButton;
 
 public class MainActivity extends Base {
@@ -27,7 +30,6 @@ public class MainActivity extends Base {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_main);
 
         initView();
@@ -52,7 +54,8 @@ public class MainActivity extends Base {
             public void onClick(View v) {
                 String tmpUrl = url.getText().toString().isEmpty() ? "https://app.griyabelajar.com" : url.getText().toString();
                 String baseUrl = "https://" + tmpUrl;
-                checkViolation(baseUrl);
+                if (!checkViolation())
+                    startIntent(baseUrl);
             }
         });
         actionTwo.setOnClickListener(new View.OnClickListener() {
@@ -68,24 +71,8 @@ public class MainActivity extends Base {
         });
 
         if (helper.getSession("url") != null) {
-            checkViolation(helper.getSession("url"));
-        }
-    }
-
-    private void checkViolation(String tmpUrl) {
-        PackageInfo pinfo = null;
-        try {
-            pinfo = getPackageManager().getPackageInfo("com.lwi.android.flapps", 0);
-            String verName = pinfo.versionName;
-
-            // if app is not installed
-            if (verName.isEmpty()) {
-                startIntent(tmpUrl);
-            } else {
-                Toast.makeText(MainActivity.this, "Mohon untuk tidak berbuat curang dengan menginstall aplikasi yang dilarang!", Toast.LENGTH_SHORT).show();
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            startIntent(tmpUrl);
+            if (!checkViolation())
+                startIntent(helper.getSession("url"));
         }
     }
 
@@ -117,7 +104,8 @@ public class MainActivity extends Base {
                         Toast.makeText(MainActivity.this, "Cancelled due to missing camera permission", Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    checkViolation(result.getContents());
+                    if (!checkViolation())
+                        startIntent(result.getContents());
                 }
             });
 }
