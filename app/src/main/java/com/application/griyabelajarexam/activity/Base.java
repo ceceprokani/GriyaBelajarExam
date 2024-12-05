@@ -10,24 +10,26 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.application.griyabelajarexam.R;
+import com.application.griyabelajarexam.helper.BatteryDrawable;
 import com.application.griyabelajarexam.helper.General;
 
 import java.util.Arrays;
 import java.util.List;
 
-import eo.view.batterymeter.BatteryMeter;
-
 public class Base extends AppCompatActivity {
-    private BatteryMeter batteryMeter;
+    private ImageView battery;
     protected ImageButton back;
     protected General helper;
     protected TextView title;
+
+    private BatteryDrawable batteryDrawable;
     protected String packageList[] = {
             "comspli.exaspli.splitscspli",
             "com.split.screen.shortcut.overview.accessibility.notification",
@@ -51,15 +53,17 @@ public class Base extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        batteryDrawable = new BatteryDrawable();
         this.helper = new General(this);
     }
 
     protected void initView() {
-        batteryMeter = findViewById(R.id.battery);
         back = findViewById(R.id.back);
         title = findViewById(R.id.title);
-    }
+        battery = findViewById(R.id.battery);
 
+        battery.setImageDrawable(batteryDrawable);
+    }
 
     private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
         @Override
@@ -68,17 +72,11 @@ public class Base extends AppCompatActivity {
             int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
             int batteryPct = (int) (level * 100 / (float) scale);
-            batteryMeter.setChargeLevel(batteryPct);
+            batteryDrawable.setBatteryLevel(batteryPct);
 
             int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
             boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                     status == BatteryManager.BATTERY_STATUS_FULL;
-
-            if (isCharging) {
-                batteryMeter.setCharging(true);
-            } else {
-                batteryMeter.setCharging(false);
-            }
         }
     };
 

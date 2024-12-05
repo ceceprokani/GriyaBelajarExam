@@ -53,21 +53,13 @@
                 android:textSize="18dp"
                 android:textStyle="bold" />
 
-            <eo.view.batterymeter.BatteryMeterView
+            <ImageView
                 android:id="@+id/battery"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="20dp"
+                android:layout_height="25dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="8dp"
-                app:batteryMeterChargeLevel="10"
-                app:batteryMeterChargingColor="@color/white"
-                app:batteryMeterColor="@color/white"
-                app:batteryMeterCriticalChargeLevel="15"
-                app:batteryMeterCriticalColor="@color/white"
-                app:batteryMeterIndicatorColor="@android:color/transparent"
-                app:batteryMeterTheme="rounded"
-                app:batteryMeterUnknownColor="#e0e0e0" />
+                android:layout_marginRight="8dp" />
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 </androidx.constraintlayout.widget.ConstraintLayout>

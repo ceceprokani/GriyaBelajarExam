@@ -10,8 +10,8 @@ android {
         applicationId "com.application.griyabelajarexam"
         minSdk 24
         targetSdk 34
-        versionCode 11
-        versionName "1.7.3"
+        versionCode 12
+        versionName "1.7.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -36,8 +36,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
 
-    implementation 'com.github.medyo:fancybuttons:1.9.1'
+    implementation 'com.github.medyo:fancybuttons:1.8.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
-    implementation 'eo.view:batterymeter:2.0.0'
 }
