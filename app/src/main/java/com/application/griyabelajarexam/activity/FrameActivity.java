@@ -99,6 +99,7 @@ public class FrameActivity extends Base {
             frame.getSettings().setJavaScriptEnabled(true);
             frame.getSettings().setLoadWithOverviewMode(false);
             frame.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+            frame.getSettings().setUserAgentString(frame.getSettings().getUserAgentString() + " griyaexam");
             frame.setBackgroundColor(Color.TRANSPARENT);
             frame.setLayerType(WebView.LAYER_TYPE_NONE, null);
             frame.clearHistory();
@@ -154,13 +155,14 @@ public class FrameActivity extends Base {
                     }
                 }
             });
+
             frame.loadUrl(url);
         } catch (Exception ignored) {
         }
     }
 
     private boolean isLoggedIn() {
-        return this.helper.getSession("isLoggedIn").equals("1");
+        return this.helper.getSession("isLoggedIn") != null && this.helper.getSession("isLoggedIn").equals("1");
     }
 
     private void onBackPress() {

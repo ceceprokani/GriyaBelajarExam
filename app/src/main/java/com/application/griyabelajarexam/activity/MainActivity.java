@@ -1,14 +1,12 @@
 package com.application.griyabelajarexam.activity;
 
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -19,13 +17,12 @@ import com.google.zxing.client.android.Intents;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
-import java.util.List;
-
 import mehdi.sakout.fancybuttons.FancyButton;
 
 public class MainActivity extends Base {
     private FancyButton actionOne, actionTwo;
     private TextInputEditText url;
+    private TextView version;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +37,25 @@ public class MainActivity extends Base {
     protected void initView() {
         super.initView();
 
+        version = findViewById(R.id.version);
         actionOne = findViewById(R.id.action1);
         actionTwo = findViewById(R.id.action2);
         url = findViewById(R.id.url);
-
-        back.setVisibility(View.GONE);
-        title.setPadding(100, 0,0,0);
     }
 
     private void init() {
+        back.setVisibility(View.GONE);
+        title.setPadding(100, 0, 0, 0);
+
+        try {
+            String versionName = getPackageManager()
+                    .getPackageInfo(getPackageName(), 0).versionName;
+
+            version.setText("Versi " + versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
         actionOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

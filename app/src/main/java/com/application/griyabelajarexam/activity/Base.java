@@ -42,7 +42,9 @@ public class Base extends AppCompatActivity {
             "com.dualbrowser.splitscreen.multi",
             "splitscreen.dualscreen.favoriteappindia",
             "com.view.multiscreenviewbrowser",
-            "com.aicity.aiscreen"
+            "com.aicity.aiscreen",
+            "com.applay.overlay",
+            "com.lwi.android.flapps"
     };
 
     @Override
@@ -84,17 +86,27 @@ public class Base extends AppCompatActivity {
         boolean isInstalled = false;
         try {
             List<ApplicationInfo> listPackageInstalled = getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
-
+            String applicationNameDetected = "";
             for (ApplicationInfo data: listPackageInstalled) {
                 if (Arrays.asList(packageList).contains(data.packageName)) {
                     isInstalled = true;
+
+                    final PackageManager pm = getApplicationContext().getPackageManager();
+                    ApplicationInfo ai;
+                    try {
+                        ai = pm.getApplicationInfo(data.packageName, 0);
+                    } catch (final PackageManager.NameNotFoundException e) {
+                        ai = null;
+                    }
+
+                    applicationNameDetected = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
                     break;
                 }
             }
 
 //            // if app is not installed
             if (isInstalled) {
-                Toast.makeText(getApplicationContext(), "Mohon untuk tidak berbuat curang dengan menginstall aplikasi yang dilarang!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Kamu terdekteksi melakukan kecurangan dengan menginstall aplikasi " + applicationNameDetected, Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             e.printStackTrace();

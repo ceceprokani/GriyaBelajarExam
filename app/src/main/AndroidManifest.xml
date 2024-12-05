@@ -4,8 +4,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
-        tools:ignore="QueryAllPackagesPermission" />
     <queries>
         <package android:name="com.lwi.android.flapps" />
         <package android:name="comspli.exaspli.splitscspli" />
@@ -22,6 +20,7 @@
         <package android:name="splitscreen.dualscreen.favoriteappindia" />
         <package android:name="com.view.multiscreenviewbrowser" />
         <package android:name="com.aicity.aiscreen" />
+        <package android:name="com.applay.overlay" />
     </queries>
 
     <application
