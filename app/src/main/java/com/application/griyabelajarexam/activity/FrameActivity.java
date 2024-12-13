@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -16,6 +18,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
@@ -32,6 +35,13 @@ public class FrameActivity extends Base {
     private boolean isPause = false;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    private boolean isScreenLockedMode = false;
+
+    private boolean onQuizPage = false;
+
+    private Handler handler;
+    private Runnable runnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +52,22 @@ public class FrameActivity extends Base {
 
         setContentView(R.layout.activity_content);
 
-        startLockTask();
+        handler = new Handler(Looper.getMainLooper());
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!isInLockTaskMode()) {
+                    finished();
+                }
+
+                handler.postDelayed(this, 1000);
+            }
+        };
+
+        // Menjalankan Runnable pertama kali
+        handler.post(runnable);
+
         initView();
         init();
 
@@ -153,6 +178,10 @@ public class FrameActivity extends Base {
                     } else {
                         helper.saveSession("isLoggedIn", "0");
                     }
+
+                    if (url.contains("/start/")) {
+                        onQuizPage = true;
+                    }
                 }
             });
 
@@ -178,32 +207,36 @@ public class FrameActivity extends Base {
     private void initConfirmationDialog() {
         new AlertDialog.Builder(this).setTitle("PERINGATAN!!!").setMessage("Apakah kamu yakin akan keluar dari aplikasi ? kamu akan otomatis logout" + " dari aplikasi!").setIcon(R.drawable.warning).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                frame.setWebViewClient(new WebViewClient() {
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                        // TODO Auto-generated method stub
-                        view.loadUrl(request.getUrl().toString());
-                        return true;
-                    }
+                if (onQuizPage) {
+                    frame.setWebViewClient(new WebViewClient() {
+                        @Override
+                        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                            // TODO Auto-generated method stub
+                            view.loadUrl(request.getUrl().toString());
+                            return true;
+                        }
 
-                    @Override
-                    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                        super.onReceivedSslError(view, handler, error);
-                    }
+                        @Override
+                        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                            super.onReceivedSslError(view, handler, error);
+                        }
 
-                    @Override
-                    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                        super.onReceivedError(view, request, error);
-                    }
+                        @Override
+                        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                            super.onReceivedError(view, request, error);
+                        }
 
-                    @Override
-                    public void onPageFinished(final WebView view, final String url) {
-                        super.onPageFinished(view, url);
+                        @Override
+                        public void onPageFinished(final WebView view, final String url) {
+                            super.onPageFinished(view, url);
 
-                        finished();
-                    }
-                });
-                frame.loadUrl("javascript:(function(){document.getElementById('lock_users').click();})();");
+                            finished();
+                        }
+                    });
+                    frame.loadUrl("javascript:(function(){document.getElementById('block_users').click();})();");
+                } else {
+                    finished();
+                }
             }
         }).setNegativeButton(android.R.string.no, null).show();
     }
@@ -219,7 +252,9 @@ public class FrameActivity extends Base {
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            startLockTask();
+            if (!isScreenLockedMode) {
+                finish();
+            }
             return false;
         } else {
             return super.onKeyLongPress(keyCode, event);
@@ -262,5 +297,12 @@ public class FrameActivity extends Base {
             frame.reload();
         }
 //        finished();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Jangan lupa untuk menghentikan handler saat activity dihancurkan
+        handler.removeCallbacks(runnable);
     }
 }

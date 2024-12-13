@@ -1,5 +1,6 @@
 package com.application.griyabelajarexam.activity;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,8 +8,8 @@ import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -113,9 +114,31 @@ public class Base extends AppCompatActivity {
         return isInstalled;
     }
 
+    protected void startKioskMode() {
+        try {
+            // Mulai Lock Task Mode
+            startLockTask();
+        } catch (Exception e) {
+            // Handle error
+            e.printStackTrace();
+//            finish(); // Tutup aplikasi jika ada error
+        }
+    }
+
+    protected boolean isInLockTaskMode() {
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return activityManager.getLockTaskModeState() != ActivityManager.LOCK_TASK_MODE_NONE;
+        } else {
+            // Versi lama (Lollipop)
+            return activityManager.isInLockTaskMode();
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
+
         registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
 

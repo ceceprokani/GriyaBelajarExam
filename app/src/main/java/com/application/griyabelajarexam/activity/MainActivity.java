@@ -3,6 +3,8 @@ package com.application.griyabelajarexam.activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -24,6 +26,11 @@ public class MainActivity extends Base {
     private TextInputEditText url;
     private TextView version;
 
+    private boolean isScreenLockedMode = false;
+
+    private Handler handler;
+    private Runnable runnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +38,24 @@ public class MainActivity extends Base {
 
         initView();
         init();
+
+        handler = new Handler(Looper.getMainLooper());
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isInLockTaskMode()) {
+                    isScreenLockedMode = true;
+                } else {
+                    isScreenLockedMode = false;
+                }
+
+                handler.postDelayed(this, 1000);
+            }
+        };
+
+        // Menjalankan Runnable pertama kali
+        handler.post(runnable);
     }
 
     @Override
@@ -61,8 +86,13 @@ public class MainActivity extends Base {
             public void onClick(View v) {
                 String tmpUrl = url.getText().toString().isEmpty() ? "https://app.griyabelajar.com" : url.getText().toString();
                 String baseUrl = "https://" + tmpUrl;
-                if (!checkViolation())
-                    startIntent(baseUrl);
+                if (!checkViolation()) {
+                    if (!isScreenLockedMode) {
+                        startKioskMode();
+                    } else {
+                        startIntent(baseUrl);
+                    }
+                }
             }
         });
         actionTwo.setOnClickListener(new View.OnClickListener() {
@@ -78,8 +108,13 @@ public class MainActivity extends Base {
         });
 
         if (helper.getSession("url") != null) {
-            if (!checkViolation())
-                startIntent(helper.getSession("url"));
+            if (!checkViolation()) {
+                if (!isScreenLockedMode) {
+                    startKioskMode();
+                } else {
+                    startIntent(helper.getSession("url"));
+                }
+            }
         }
     }
 
@@ -115,4 +150,11 @@ public class MainActivity extends Base {
                         startIntent(result.getContents());
                 }
             });
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Jangan lupa untuk menghentikan handler saat activity dihancurkan
+        handler.removeCallbacks(runnable);
+    }
 }
