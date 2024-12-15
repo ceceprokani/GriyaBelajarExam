@@ -31,6 +31,9 @@ public class MainActivity extends Base {
     private Handler handler;
     private Runnable runnable;
 
+    private String currentAction = "";
+    private String baseUrl = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,11 +49,20 @@ public class MainActivity extends Base {
             public void run() {
                 if (isInLockTaskMode()) {
                     isScreenLockedMode = true;
+                    if (!currentAction.isEmpty()) {
+                        if (currentAction.equals("url")) {
+                            currentAction = "";
+                            startIntent(baseUrl);
+                        } else {
+                            currentAction = "";
+                            openScanner();
+                        }
+                    }
                 } else {
                     isScreenLockedMode = false;
                 }
 
-                handler.postDelayed(this, 1000);
+                handler.postDelayed(this, 500);
             }
         };
 
@@ -85,8 +97,9 @@ public class MainActivity extends Base {
             @Override
             public void onClick(View v) {
                 String tmpUrl = url.getText().toString().isEmpty() ? "https://app.griyabelajar.com" : url.getText().toString();
-                String baseUrl = "https://" + tmpUrl;
+                baseUrl = "https://" + tmpUrl;
                 if (!checkViolation()) {
+                    currentAction = "url";
                     if (!isScreenLockedMode) {
                         startKioskMode();
                     } else {
@@ -98,24 +111,29 @@ public class MainActivity extends Base {
         actionTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ScanOptions options = new ScanOptions();
-                options.setPrompt("Place a qrcode inside the rectangle to scan it.");
-                options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
-                options.setBarcodeImageEnabled(true);
-                options.setOrientationLocked(false);
-                barcodeLauncher.launch(options);
+                currentAction = "qrcode";
+                if (!isScreenLockedMode) {
+                    startKioskMode();
+                } else {
+                    openScanner();
+                }
             }
         });
 
         if (helper.getSession("url") != null) {
             if (!checkViolation()) {
-                if (!isScreenLockedMode) {
-                    startKioskMode();
-                } else {
-                    startIntent(helper.getSession("url"));
-                }
+                startIntent(helper.getSession("url"));
             }
         }
+    }
+
+    private void openScanner() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Place a qrcode inside the rectangle to scan it.");
+        options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
+        options.setBarcodeImageEnabled(true);
+        options.setOrientationLocked(false);
+        barcodeLauncher.launch(options);
     }
 
     private void startIntent(String tmpUrl) {
